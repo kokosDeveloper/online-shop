@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/online-shop
+    password: postgres
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: a0c62c560bd9b25542d4e56fe440bd7fb6c40e8e932c196221e0e0f8367459710205d840535ec0cbf172f9e8af286a47739b631c35c554e370d3e2e038f51a20a210790a30ed5d4291bbe7ab050c975c11d775a46098f80f0419d780e00c02b6d2e0ab150ad852aaab5d5b39afcb2cc6744fe31ecc45686dd5f11bf5b25a0b0103316e4f4b4e11512cfa5ec66f3be8cff6fb80882e9d499d59d34bfe4f41c85557b60ea55b8071c554521a4eb0c1651083d377fd41ee2ce0c0b67ad0699e324632135743e708830e74fdd3d4b135d173289a395e0021db956ec378e30dec2d4d4c87c7751765cc8e414787c1e258e763d426c45ea57bacd270cc15ee5f46ac29
+  expiration: 900000 #15 мин
