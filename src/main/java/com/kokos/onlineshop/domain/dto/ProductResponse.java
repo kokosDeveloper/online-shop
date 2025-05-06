@@ -9,6 +9,7 @@ public record ProductResponse(
         String description,
         BigDecimal price,
         int inventory,
-        Long categoryId
+        Long categoryId,
+        String image
 ) {
 }

@@ -12,27 +12,28 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CartItem {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int quantity;
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    private Cart cart;
+    private int quantity;
+    private BigDecimal unitPrice;
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        CartItem cartItem = (CartItem) o;
-        return Objects.equals(product, cartItem.product) && Objects.equals(cart, cartItem.cart);
+        OrderItem orderItem = (OrderItem) o;
+        return Objects.equals(order, orderItem.order) && Objects.equals(product, orderItem.product);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(product, cart);
+        return Objects.hash(order, product);
     }
 }

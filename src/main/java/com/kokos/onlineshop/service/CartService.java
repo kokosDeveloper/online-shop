@@ -37,7 +37,6 @@ public class CartService {
         Cart usersCart = getCartByUserId(user.getId());
 
         usersCart.getCartItems().clear();
-        usersCart.updateTotalAmount();
         return cartMapper.toCartResponse(usersCart);
     }
 }

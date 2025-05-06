@@ -18,5 +18,4 @@ import java.util.Map;
 public class ExceptionResponse {
     private String message;
     private Map<String, String> fieldErrors = new HashMap<>();
-
 }

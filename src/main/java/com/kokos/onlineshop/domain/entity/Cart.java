@@ -18,7 +18,6 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private BigDecimal totalAmount = BigDecimal.ZERO;
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -28,21 +27,10 @@ public class Cart {
     public void addItem(CartItem item) {
         cartItems.add(item);
         item.setCart(this);
-        updateTotalAmount();
     }
 
     public void removeItemById(Long cartItemId){
         cartItems.removeIf(cartItem -> cartItemId.equals(cartItem.getId()));
-        updateTotalAmount();
-    }
-    public void updateTotalAmount() {
-        totalAmount = cartItems.stream()
-                .map(item -> {
-                    return item.getUnitPrice() == null
-                            ? BigDecimal.ZERO
-                            : item.getUnitPrice().multiply(new BigDecimal(item.getQuantity()));
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override

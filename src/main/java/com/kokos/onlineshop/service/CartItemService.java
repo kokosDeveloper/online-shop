@@ -39,7 +39,6 @@ public class CartItemService {
                     CartItem item = new CartItem();
                     item.setProduct(product);
                     item.setQuantity(0);
-                    item.setUnitPrice(product.getPrice());
                     cart.addItem(item);
                     return item;
                 });
@@ -51,8 +50,6 @@ public class CartItemService {
             throw new InsufficientStockException("Not enough product in stock");
 
         existingItemOrNew.setQuantity(newQuantity);
-        existingItemOrNew.setTotalPrice();
-        cart.updateTotalAmount();
         cartItemRepository.save(existingItemOrNew);
         return cartItemMapper.toCartItemResponse(existingItemOrNew);
     }
@@ -77,8 +74,6 @@ public class CartItemService {
         if (product.getInventory() < request.quantity())
             throw new InsufficientStockException("Not enough product in stock");
         forUpdate.setQuantity(request.quantity());
-        forUpdate.setTotalPrice();
-        cart.updateTotalAmount();
         return cartMapper.toCartResponse(cart);
     }
 }

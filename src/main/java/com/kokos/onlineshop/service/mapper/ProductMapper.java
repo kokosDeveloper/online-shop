@@ -16,7 +16,8 @@ public class ProductMapper {
                 product.getDescription(),
                 product.getPrice(),
                 product.getInventory(),
-                product.getCategory().getId()
+                product.getCategory().getId(),
+                product.getImage()
         );
     }
     public Product toProduct(ProductRequest productRequest, Category category){

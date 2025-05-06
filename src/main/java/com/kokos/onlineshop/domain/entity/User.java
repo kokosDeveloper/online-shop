@@ -28,6 +28,8 @@ public class User implements UserDetails {
     private Set<String> roles;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cart cart;
+    @OneToMany(mappedBy = "user")
+    private Set<Order> orders;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()

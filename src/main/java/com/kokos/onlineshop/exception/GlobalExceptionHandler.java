@@ -6,6 +6,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(AlreadyExistsException.class)
@@ -38,6 +40,22 @@ public class GlobalExceptionHandler {
         });
         return ResponseEntity.badRequest().body(response);
     }
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ExceptionResponse> handleException(IllegalStateException e){
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .message(e.getMessage())
+                .build();
+        return ResponseEntity.badRequest().body(exceptionResponse);
+    }
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ExceptionResponse> handleException(IOException e){
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .message(e.getMessage())
+                .build();
+        return ResponseEntity.badRequest().body(exceptionResponse);
+    }
+
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(Exception e){
         e.printStackTrace();

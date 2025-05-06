@@ -1,5 +1,8 @@
 package com.kokos.onlineshop.domain.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 public record CartItemResponse(
