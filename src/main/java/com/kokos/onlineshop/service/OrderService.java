@@ -8,12 +8,14 @@ import com.kokos.onlineshop.service.business_rules.BusinessRuleEngine;
 import com.kokos.onlineshop.service.business_rules.Facts;
 import com.kokos.onlineshop.service.business_rules.Rule;
 import com.kokos.onlineshop.service.business_rules.RuleBuilder;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ public class OrderService {
     private final CartService cartService;
     private final ProductService productService;
     private final OrderRepository orderRepository;
+    private final UserService userService;
 
 
     public OrderResponse createOrder(Authentication authentication) {
@@ -116,5 +119,16 @@ public class OrderService {
         User user = (User) authentication.getPrincipal();
         List<Order> userOrders = orderRepository.findAllByUserId(user.getId());
         return toOrderResponses(userOrders, user.getId());
+    }
+
+    public List<OrderResponse> getOrdersByUserId(Long userId) {
+        User user = userService.getUserById(userId);
+        return toOrderResponses(new ArrayList<>(user.getOrders()), user.getId());
+    }
+
+    public OrderResponse getOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("No order found with id: " + orderId));
+        return toOrderResponse(order, order.getUser().getId());
     }
 }

@@ -8,6 +8,7 @@ import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
     @PostMapping
+    @PreAuthorize("HasAuthority('addCategory')")
     public ResponseEntity<CategoryResponse> createCategory(
             @Validated({Default.class}) @RequestBody CategoryRequest request
     ){
@@ -38,6 +40,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getCategoryResponseById(id));
     }
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('deleteCategory')")
     public ResponseEntity<Void> deleteCategoryById(
             @PathVariable Long id
     ){
@@ -45,6 +48,7 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
     @PutMapping
+    @PreAuthorize("hasAuthority('updateCategory')")
     public ResponseEntity<CategoryResponse> updateCategory(
             @Validated({Default.class, OnUpdate.class}) @RequestBody CategoryRequest request
     ){

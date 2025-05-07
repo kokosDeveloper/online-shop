@@ -1,5 +1,6 @@
 package com.kokos.onlineshop.security;
 
+import com.kokos.onlineshop.domain.entity.Permission;
 import com.kokos.onlineshop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class Config {
     private final UserRepository userRepository;
     @Bean
@@ -52,10 +55,13 @@ public class Config {
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET,
-                        "/categories",
                         "/categories/**",
-                        "/products",
                         "/products/**").permitAll()
+                //products
+                .requestMatchers(HttpMethod.POST, "/products/**").hasAuthority(Permission.ADMIN_ADD_PRODUCT.getPermission())
+                .requestMatchers(HttpMethod.DELETE, "/products/**").hasAuthority(Permission.ADMIN_DELETE_PRODUCT.getPermission())
+                .requestMatchers(HttpMethod.PUT, "/products/**").hasAuthority(Permission.ADMIN_UPDATE_PRODUCT.getPermission())
+
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

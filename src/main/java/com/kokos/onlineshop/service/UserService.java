@@ -4,11 +4,13 @@ import com.kokos.onlineshop.domain.dto.AuthenticationResponse;
 import com.kokos.onlineshop.domain.dto.LoginRequest;
 import com.kokos.onlineshop.domain.dto.RegisterRequest;
 import com.kokos.onlineshop.domain.entity.Cart;
+import com.kokos.onlineshop.domain.entity.Role;
 import com.kokos.onlineshop.domain.entity.User;
 import com.kokos.onlineshop.exception.AlreadyExistsException;
 import com.kokos.onlineshop.repository.UserRepository;
 import com.kokos.onlineshop.security.JwtService;
 import com.kokos.onlineshop.service.mapper.UserMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +44,7 @@ public class UserService {
             throw new AlreadyExistsException("User already exists with email: " + request.email());
         User newUser = userMapper.toUser(request);
         createCartForUser(newUser);
-        newUser.setRoles(Set.of("ROLE_USER"));
+        newUser.setRole(Role.USER);
         userRepository.save(newUser);
     }
 
@@ -50,5 +52,9 @@ public class UserService {
         Cart cart = new Cart();
         newUser.setCart(cart);
         cart.setUser(newUser);
+    }
+    public User getUserById(Long id){
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User doesn't exist with id: " + id));
     }
 }

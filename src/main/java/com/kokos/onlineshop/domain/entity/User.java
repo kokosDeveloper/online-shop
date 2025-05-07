@@ -24,17 +24,15 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cart cart;
     @OneToMany(mappedBy = "user")
     private Set<Order> orders;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(authority -> new SimpleGrantedAuthority(authority))
-                .toList();
+        return role.getAuthorities();
     }
 
     @Override

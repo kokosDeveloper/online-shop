@@ -6,11 +6,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,5 +30,20 @@ public class OrderController {
             Authentication authentication
     ){
         return ResponseEntity.ok(orderService.getAllUsersOrders(authentication));
+    }
+
+    @GetMapping("/{order-id}")
+    @PreAuthorize("hasAuthority('getUserOrders')")
+    public ResponseEntity<OrderResponse> getOrderById(
+            @PathVariable("order-id") Long orderId
+    ){
+        return ResponseEntity.ok(orderService.getOrderById(orderId));
+    }
+    @GetMapping("/user/{user-id}")
+    @PreAuthorize("hasAuthority('getUserOrders')")
+    public ResponseEntity<List<OrderResponse>> getAllOrdersByUserId(
+            @PathVariable("user-id") Long userId
+    ){
+        return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
     }
 }
