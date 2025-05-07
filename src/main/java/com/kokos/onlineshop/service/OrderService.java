@@ -4,6 +4,10 @@ import com.kokos.onlineshop.domain.dto.OrderResponse;
 import com.kokos.onlineshop.domain.dto.OrderItemResponse;
 import com.kokos.onlineshop.domain.entity.*;
 import com.kokos.onlineshop.repository.OrderRepository;
+import com.kokos.onlineshop.service.business_rules.BusinessRuleEngine;
+import com.kokos.onlineshop.service.business_rules.Facts;
+import com.kokos.onlineshop.service.business_rules.Rule;
+import com.kokos.onlineshop.service.business_rules.RuleBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.security.core.Authentication;
@@ -47,6 +51,24 @@ public class OrderService {
                             .build();
                 }).collect(Collectors.toSet());
         order.setOrderItems(orderItems);
+        order.setTotalAmount(calculateTotalAmount(order));
+
+        //business rules
+        Facts facts = new Facts();
+        BusinessRuleEngine ruleEngine = new BusinessRuleEngine(facts);
+        facts.addFact("order", order);
+        Rule rule = RuleBuilder
+                .when(fact -> {
+                    Order factOrder =(Order) facts.getFact("order");
+                    BigDecimal totalAmount = factOrder.getTotalAmount();
+                    return totalAmount.compareTo(new BigDecimal(5000)) > 0;
+                }).then(fact -> {
+                    Order factOrder =(Order) facts.getFact("order");
+                    factOrder.setTotalAmount(factOrder.getTotalAmount().multiply(new BigDecimal(0.5)));
+                });
+        ruleEngine.addRule(rule);
+        ruleEngine.run();
+
         orderRepository.save(order);
         cartService.clearCart(authentication);
         return toOrderResponse(order, user.getId());
@@ -56,7 +78,7 @@ public class OrderService {
                 userId,
                 order.getStatus(),
                 order.getCreatedAt(),
-                calculateTotalAmount(order),
+                order.getTotalAmount(),
                 toOrderItemResponses(order.getOrderItems())
         );
     }
