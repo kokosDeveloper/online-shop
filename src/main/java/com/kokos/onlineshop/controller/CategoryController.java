@@ -20,7 +20,7 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
     @PostMapping
-    @PreAuthorize("HasAuthority('addCategory')")
+    @PreAuthorize("hasAuthority('addCategory')")
     public ResponseEntity<CategoryResponse> createCategory(
             @Validated({Default.class}) @RequestBody CategoryRequest request
     ){

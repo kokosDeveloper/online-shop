@@ -1,9 +1,12 @@
 package com.kokos.onlineshop.exception;
 
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(AlreadyExistsException.class)
@@ -59,12 +63,31 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(exceptionResponse);
     }
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<ExceptionResponse> handleException(AuthorizationDeniedException e){
+    public ResponseEntity<ExceptionResponse> handleException(AuthorizationDeniedException e) {
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
                 .message(e.getMessage())
                 .build();
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
+                .body(exceptionResponse);
+    }
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<ExceptionResponse> handleException(MessagingException e){
+        log.error("Message was not sent: " + e);
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .message("Email was not sent: " + e.getMessage())
+                .build();
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(exceptionResponse);
+    }
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ExceptionResponse> handleException(DisabledException e){
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .message("Confirm your email to activate your account")
+                .build();
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(exceptionResponse);
     }
 

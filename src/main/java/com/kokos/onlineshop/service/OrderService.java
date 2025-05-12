@@ -8,6 +8,7 @@ import com.kokos.onlineshop.service.business_rules.BusinessRuleEngine;
 import com.kokos.onlineshop.service.business_rules.Facts;
 import com.kokos.onlineshop.service.business_rules.Rule;
 import com.kokos.onlineshop.service.business_rules.RuleBuilder;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -27,9 +28,10 @@ public class OrderService {
     private final ProductService productService;
     private final OrderRepository orderRepository;
     private final UserService userService;
+    private final EmailService emailService;
 
 
-    public OrderResponse createOrder(Authentication authentication) {
+    public OrderResponse createOrder(Authentication authentication) throws MessagingException {
         User user = (User) authentication.getPrincipal();
         Cart cart = cartService.getCartByUserId(user.getId());
 
@@ -71,9 +73,11 @@ public class OrderService {
                 });
         ruleEngine.addRule(rule);
         ruleEngine.run();
-
         orderRepository.save(order);
         cartService.clearCart(authentication);
+
+        emailService.sendOrderConfirmation(user.getEmail(), user.getFullName(), EmailTemplateName.ORDER_CONFIRMATION, order);
+
         return toOrderResponse(order, user.getId());
     }
     private OrderResponse toOrderResponse(Order order, Long userId){

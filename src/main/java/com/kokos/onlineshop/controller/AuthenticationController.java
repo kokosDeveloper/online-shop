@@ -4,14 +4,11 @@ import com.kokos.onlineshop.domain.dto.LoginRequest;
 import com.kokos.onlineshop.domain.dto.AuthenticationResponse;
 import com.kokos.onlineshop.domain.dto.RegisterRequest;
 import com.kokos.onlineshop.service.UserService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,8 +25,16 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<Void> register(
             @Valid @RequestBody RegisterRequest request
-            ){
+            ) throws MessagingException {
         userService.register(request);
         return ResponseEntity.ok().build();
     }
+    @GetMapping("/activate-account")
+    public ResponseEntity<Void> activateAccount(
+            @RequestParam String token
+    ) throws MessagingException {
+        userService.activateAccount(token);
+        return ResponseEntity.ok().build();
+    }
+
 }

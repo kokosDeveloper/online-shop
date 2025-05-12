@@ -34,6 +34,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return role.getAuthorities();
     }
+    private boolean enabled;
 
     @Override
     public String getPassword() {
@@ -62,6 +63,9 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return enabled;
+    }
+    public String getFullName(){
+        return firstName + " " + lastName;
     }
 }

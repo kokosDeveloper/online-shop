@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-token
+      author: Ivan
+      changes:
+        - createTable:
+            tableName: token
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+              - column:
+                  name: token
+                  type: varchar
+              - column:
+                  name: created_at
+                  type: timestamp
+              - column:
+                  name: expires_at
+                  type: timestamp
+              - column:
+                  name: validated_at
+                  type: timestamp
+        - addForeignKeyConstraint:
+            baseTableName: token
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_token_users

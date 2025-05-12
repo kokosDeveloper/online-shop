@@ -52,8 +52,11 @@ public class Config {
     public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
                 .csrf().disable()
+                .headers().frameOptions().disable()
+                .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.GET,
                         "/categories/**",
                         "/products/**").permitAll()

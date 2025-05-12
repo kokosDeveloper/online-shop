@@ -2,6 +2,7 @@ package com.kokos.onlineshop.controller;
 
 import com.kokos.onlineshop.domain.dto.OrderResponse;
 import com.kokos.onlineshop.service.OrderService;
+import jakarta.mail.MessagingException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(
             Authentication authentication
-    ){
+    ) throws MessagingException {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(orderService.createOrder(authentication));
